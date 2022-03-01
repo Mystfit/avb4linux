@@ -1,1 +1,11 @@
-.o
+daemons/
+tools/
+
+*.o
+*.cmd
+*.a
+*.ko
+*.mod
+*.symvers
+*.order
+*.mod.c
