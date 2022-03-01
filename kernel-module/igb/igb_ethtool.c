@@ -3327,7 +3327,9 @@ static int igb_set_channels(struct net_device *dev,
 
 #endif /* ETHTOOL_SCHANNELS */
 static const struct ethtool_ops igb_ethtool_ops = {
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,7,0)
 	.supported_coalesce_params = ETHTOOL_COALESCE_USECS,
+#endif
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4,12,0)
 	.get_link_ksettings	= igb_get_link_ksettings,
 	.set_link_ksettings	= igb_set_link_ksettings,

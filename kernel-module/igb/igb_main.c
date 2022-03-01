@@ -138,7 +138,7 @@ static void igb_watchdog_task(struct work_struct *);
 static void igb_dma_err_task(struct work_struct *);
 /* AVB specific */
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,6,2)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,4,0)
 static u16 igb_select_queue(struct net_device *dev, struct sk_buff *skb,
 			    struct net_device *sb_dev);
 #else
@@ -5558,7 +5558,7 @@ static void igb_tx_map(struct igb_ring *tx_ring,
 	struct sk_buff *skb = first->skb;
 	struct igb_tx_buffer *tx_buffer;
 	union e1000_adv_tx_desc *tx_desc;
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,6,2)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,4,0)
 	skb_frag_t *frag;
 #else
 	struct skb_frag_struct *frag;
@@ -5831,7 +5831,7 @@ static inline struct igb_ring *igb_tx_queue_mapping(struct igb_adapter *adapter,
 #error Must have multi-queue tx support enabled (CONFIG_NETDEVICES_MULTIQUEUE)!
 #endif
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,6,2)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,4,0)
 static u16 igb_select_queue(struct net_device *dev, struct sk_buff *skb,
 			    struct net_device *sb_dev)
 #else
@@ -8619,7 +8619,7 @@ static void igb_pull_tail(struct igb_ring *rx_ring,
 	unsigned char *va;
 	unsigned int pull_len;
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,6,2)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,4,0)
 	skb_frag_t *frag = &skb_shinfo(skb)->frags[0];;
 #else
 	struct skb_frag_struct *frag = &skb_shinfo(skb)->frags[0];
@@ -8639,7 +8639,7 @@ static void igb_pull_tail(struct igb_ring *rx_ring,
 
 		/* update pointers to remove timestamp header */
 		skb_frag_size_sub(frag, IGB_TS_HDR_LEN);
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,6,2)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,4,0)
 		frag->bv_offset += IGB_TS_HDR_LEN;
 #else
 		frag->page_offset += IGB_TS_HDR_LEN;
@@ -8663,7 +8663,7 @@ static void igb_pull_tail(struct igb_ring *rx_ring,
 
 	/* update all of the pointers */
 	skb_frag_size_sub(frag, pull_len);
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,6,2)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,4,0)
 	frag->bv_offset += pull_len;
 #else
 	frag->page_offset += pull_len;
@@ -9699,7 +9699,11 @@ static pci_ers_result_t igb_io_error_detected(struct pci_dev *pdev,
 			pci_write_config_dword(vfdev, 0xA8, 0x00008000);
 		}
 
-		pci_aer_clear_nonfatal_status(pdev); /* pci_cleanup_aer_uncorrect_error_status(pdev); */
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,7,0)
+		pci_aer_clear_nonfatal_status(pdev);
+#else
+		pci_cleanup_aer_uncorrect_error_status(pdev);
+#endif
 	}
 
 	/*
@@ -9759,7 +9763,11 @@ static pci_ers_result_t igb_io_slot_reset(struct pci_dev *pdev)
 		result = PCI_ERS_RESULT_RECOVERED;
 	}
 
-	pci_aer_clear_nonfatal_status(pdev); /* pci_cleanup_aer_uncorrect_error_status(pdev); */
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,7,0)
+	pci_aer_clear_nonfatal_status(pdev);
+#else
+	pci_cleanup_aer_uncorrect_error_status(pdev);
+#endif
 
 	return result;
 }
